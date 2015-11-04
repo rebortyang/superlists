@@ -16,7 +16,8 @@ class NewVisitorTest(unittest.TestCase):
         #so i open it
         self.broswer.get('http://localhost:8000')
         # the title and head has a word : 'To-Do'
-        self.assertIn('To-Do', self.broswer.title)
+        self.broswer.implicitly_wait(8)
+        self.assertIn('To-Do lists', self.broswer.title)
         self.fail('finish the test!')
 
         #it call you to write one 'to-do' thing
