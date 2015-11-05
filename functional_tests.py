@@ -39,7 +39,8 @@ class NewVisitorTest(unittest.TestCase):
         table = self.broswer.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(
-            any(row.text == '1: go to HK' for row in rows)
+            any(row.text == '1: go to HK' for row in rows),
+            'new to-do item did not appear in table'
         )
         #web still has a input text.
         self.fail('finish the test!')
