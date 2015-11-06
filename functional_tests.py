@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest, time
 
+
 class NewVisitorTest(unittest.TestCase):
     def setUp(self):
         self.broswer = webdriver.Firefox()
@@ -12,12 +13,17 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.broswer.quit()
 
+    def check_for_row_in_list_table(self,row_text):
+        table = self.broswer.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         #there is a web site name 'TO-DO'
         #so i open it
         self.broswer.get('http://localhost:8000')
         # the title and head has a word : 'To-Do'
-        time.sleep(8)
+
         self.assertIn('To-Do lists', self.broswer.title)
         header_text = self.broswer.find_element_by_tag_name('h1').text
         self.assertEqual('To-Do lists', header_text)
@@ -33,10 +39,10 @@ class NewVisitorTest(unittest.TestCase):
         #enter,web refresh
         inputbox.send_keys(Keys.ENTER)
 
+        time.sleep(5)
+
         #web table show "1. go to HK"
-        table = self.broswer.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: go to HK', [row.text for row in rows])
+        self.check_for_row_in_list_table('1: go to HK')
 
         #web still has a input text.
         #i input again, 'buy phone'
@@ -44,12 +50,11 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys('buy phone')
         inputbox.send_keys(Keys.ENTER)
 
-
+        time.sleep(5)
         #web page refresh again. there are two 'to-do'
         #the web create a URL for me.and page show me some thing about it.
-        table = self.broswer.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('2: buy phone', [row.text for row in rows])
+        self.check_for_row_in_list_table('1: go to HK')
+        self.check_for_row_in_list_table('2: buy phone')
 
         #visit the URL.find 'to-do' still in.
         #sleep.
