@@ -27,7 +27,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         self.assertIn('To-Do lists', self.broswer.title)
         header_text = self.broswer.find_element_by_tag_name('h1').text
-        self.assertEqual('To-Do lists', header_text)
+        self.assertEqual('Start a new To-Do lists', header_text)
 
 
         #it call you to write one 'to-do' thing
