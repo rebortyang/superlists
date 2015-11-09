@@ -2,10 +2,11 @@ __author__ = 'yangjiebin'
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from django.test import LiveServerTestCase
 import unittest, time
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
         self.broswer = webdriver.Firefox()
         self.broswer.implicitly_wait(3)
@@ -21,7 +22,7 @@ class NewVisitorTest(unittest.TestCase):
     def test_can_start_a_list_and_retrieve_it_later(self):
         #there is a web site name 'TO-DO'
         #so i open it
-        self.broswer.get('http://localhost:8000')
+        self.broswer.get(self.live_server_url)
         # the title and head has a word : 'To-Do'
 
         self.assertIn('To-Do lists', self.broswer.title)
@@ -60,6 +61,3 @@ class NewVisitorTest(unittest.TestCase):
         #sleep.
         self.fail('finish the test!')
 
-
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
