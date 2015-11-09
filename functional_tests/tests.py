@@ -37,12 +37,14 @@ class NewVisitorTest(LiveServerTestCase):
         #i input 'go to HK'
         inputbox.send_keys('go to HK')
 
-        #enter,web refresh
+        #enter,web bring to a new URL
+        #the page show list like '1: go to HK'
         inputbox.send_keys(Keys.ENTER)
 
         time.sleep(5)
 
-        #web table show "1. go to HK"
+        edith_list_url = self.broswer.current_url
+        self.assertRegexpMatches(edith_list_url, '/lists/.+')
         self.check_for_row_in_list_table('1: go to HK')
 
         #web still has a input text.
@@ -56,6 +58,37 @@ class NewVisitorTest(LiveServerTestCase):
         #the web create a URL for me.and page show me some thing about it.
         self.check_for_row_in_list_table('1: go to HK')
         self.check_for_row_in_list_table('2: buy phone')
+
+        #now, there is a boy tom visit the web_page
+
+        ##we use the new browser
+        ## protect my info safe.
+        self.broswer.quit()
+        self.broswer = webdriver.Firefox()
+
+        time.sleep(5)
+
+        #tom visit index
+        #he can not see my list
+        self.broswer.get(self.live_server_url)
+        page_text = self.broswer.find_element_by_tag_name('body').text
+        self.assertNotIn('go to HK', page_text)
+        self.assertNotIn('buy phone', page_text)
+
+        #tom input a item, make a new list
+        inputbox = self.broswer.find_element_by_id('id_new_item')
+        inputbox.send_keys('buy milk')
+        inputbox.send_keys(Keys.ENTER)
+
+        #tom get his own URL
+        tom_list_url = self.broswer.current_url
+        self.assertRegexpMatches(tom_list_url, '/lists/.+')
+        self.assertNotEqual(edith_list_url, tom_list_url)
+
+        #this page not has my list content
+        page_text = self.broswer.find_element_by_tag_name('body').text
+        self.assertNotIn('go to HK', page_text)
+        self.assertIn('buy milk', page_text)
 
         #visit the URL.find 'to-do' still in.
         #sleep.
