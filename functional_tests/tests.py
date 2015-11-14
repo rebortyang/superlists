@@ -3,10 +3,11 @@ __author__ = 'yangjiebin'
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 import unittest, time
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.broswer = webdriver.Firefox()
         self.broswer.implicitly_wait(3)
@@ -92,5 +93,30 @@ class NewVisitorTest(LiveServerTestCase):
 
         #visit the URL.find 'to-do' still in.
         #sleep.
-        self.fail('finish the test!')
+        #self.fail('finish the test!')
+
+    def test_loyout_and_styling(self):
+        #lily visit the index
+        self.broswer.get(self.live_server_url)
+        self.broswer.set_window_size(1024,768)
+
+        #she can see the input_box is center
+        inputbox = self.broswer.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            512,
+            delta=5
+        )
+
+        #she create a new list
+        #the inputbox is still center
+        inputbox.send_keys('testing\n')
+        time.sleep(5)
+
+        inputbox = self.broswer.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            512,
+            delta=5
+        )
 
