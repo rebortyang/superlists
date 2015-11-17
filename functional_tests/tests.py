@@ -4,10 +4,25 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from django.test import LiveServerTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-import unittest, time
+import unittest, time, sys
 
 
 class NewVisitorTest(StaticLiveServerTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        for arg in sys.argv:
+            if 'liveserver' in arg:
+                cls.server_url = 'http://' + arg.split('=')[1]
+                return
+        super().setUpClass()
+        cls.server_url = cls.live_server_url
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.server_url == cls.live_server_url:
+            super().tearDownClass()
+
     def setUp(self):
         self.broswer = webdriver.Firefox()
         self.broswer.implicitly_wait(3)
@@ -23,7 +38,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def test_can_start_a_list_and_retrieve_it_later(self):
         #there is a web site name 'TO-DO'
         #so i open it
-        self.broswer.get(self.live_server_url)
+        self.broswer.get(self.server_url)
         # the title and head has a word : 'To-Do'
 
         self.assertIn('To-Do lists', self.broswer.title)
@@ -71,7 +86,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         #tom visit index
         #he can not see my list
-        self.broswer.get(self.live_server_url)
+        self.broswer.get(self.server_url)
         page_text = self.broswer.find_element_by_tag_name('body').text
         self.assertNotIn('go to HK', page_text)
         self.assertNotIn('buy phone', page_text)
@@ -97,7 +112,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_loyout_and_styling(self):
         #lily visit the index
-        self.broswer.get(self.live_server_url)
+        self.broswer.get(self.server_url)
         self.broswer.set_window_size(1024,768)
 
         #she can see the input_box is center
